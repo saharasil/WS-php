@@ -1,0 +1,22 @@
+Workshop
+Créer les dossiers et fichiers suivants que vous mettez dans le répertoire htdocs
+Dossier
+    ws-php
+            assets
+                    css
+                    img
+                    js
+            index.php
+            connect.php
+Créer une BDD "candidat" avec une table "profils" :
+id
+Nom
+Prenom
+Age
+Ville
+Motivations
+photo
+Créer avec PDO la connection à la base de données dans le fichier connect.php
+Dans le fichier index.php utiliser bootstrap pour mettre une barre de navigation
+une card et un formulaire qui servira pour l'insertion en BDD.
+
