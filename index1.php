@@ -1,19 +1,21 @@
 <?php
+
 require_once 'connect.php';
 
-
-$contenu1 ='';
 $contenu = '';
+$photo = '';
+$contenu2 = '';
+
 // debug($_POST);
 
 
-if ( isset ($_POST ['name'])&&($_POST ['prenom'])&&($_POST ['age'])&&($_POST ['ville'])&&($_POST ['motivations'])&&($_FILES['photo']['name'])){
-
-        // $nom = $_POST ['name'];
-        // $prenom = $_POST ['prenom'];
-        // $age = $_POST ['age'];
-        // $ville = $_POST ['ville'];
-        // $motivations = $_POST ['motivations'];
+if ( isset($_POST ['Nom']) && ($_POST ['prenom']) && ($_POST ['age']) && ($_POST ['ville']) && ($_POST['motivations']) && ($_FILES['photo']['name'])){
+    
+        $nom = $_POST ['Nom'];
+        $prenom = $_POST ['prenom'];
+        $age = $_POST ['age'];
+        $ville = $_POST ['ville'];
+        $motivations = $_POST ['motivations'];
         $photo = 'assets/img/' .$_FILES['photo']['name']; 
         copy($_FILES['photo']['tmp_name'], $photo);
         
@@ -25,46 +27,42 @@ if ( isset ($_POST ['name'])&&($_POST ['prenom'])&&($_POST ['age'])&&($_POST ['v
         // $_FILES ['image']['error'] Erreur si oui/non l'image a été réceptionné
 
     
-    $requete = $pdo->prepare("INSERT INTO profils (Nom, prenom, age, ville, photo, motivations) VALUE (:nom, :prenom, :age, :ville, :photo, :motivation)")
+    $requete = $pdo->prepare("INSERT INTO profils (Nom, prenom, age, ville, photo, motivations) VALUE (?, ?, ?, ?, ?, ?)")
     //permet de capturer l'erreur et de l'afficher.
         or die (print_r($pdo->errorInfo()));
-    $succes = $requete -> execute(array(':prenom' => $_POST['Nom'], 
-                                        ':nom' => $_POST['prenom'] , 
-                                        ':age' => $_POST['age'], 
-                                        ':ville' => $_POST['ville'],
-                                        ':photo' => $photo, 
-                                        ':motivation' => $_POST['motivations']
-                                    ));
-        header('location:index.php');
+    $succes = $requete -> execute(array($prenom, $nom, $age, $ville, $photo, $motivations));
+        // header('location:index.php');
 
         if($succes){
-            $contenu1 .= '<p>le profil est bien enregistré </p>';
+          $contenu .= '<p>le profil est bien enregistré </p>';
         }else {
-            $contenu1 .= '<p>Erreur l\'ors de l`\'enregistrement</p>';
+            $contenu .= '<p>Erreur l\'ors de l`\'enregistrement</p>';
         }
     
 
 }
     $query = $pdo->query("SELECT * FROM profils"); //lecture de la BDD
+    
        while( $profil = $query->fetch(PDO::FETCH_ASSOC)){
+          
 
-                $contenu .= '<div class="row mr-4 mb-2">';
-                        $contenu .= ' <div class="card" style="width: 18rem;">';
-                            $contenu .= ' <img src="' . $profil['photo'] . '" class="card-img-top" alt="">';
-                            $contenu .= ' <div class="card-body">';
-                                $contenu .= ' <h5 class="card-title">Nom et Prenom</h5>';
-                                $contenu .= ' <p class="card-text">' . $profil['Nom'].' ' . $profil['prenom'] .'</p>';
-                            $contenu .= ' </div>';
-                            $contenu .= ' <ul class="list-group list-group-flush">';
-                                $contenu .= ' <li class="list-group-item">Age : ' .$profil['age'] .'</li>';
-                                $contenu .= ' <li class="list-group-item">Ville : ' . $profil['ville'] . '</li>';     
-                            $contenu .= ' </ul>';
-                            $contenu .= ' <div class="card-body">';
-                            $contenu .= '<a href="#" class="card-link">' . substr($profil['motivations'], 0, 20).'....</a>';
-                            $contenu .= ' </div>';
-                            $contenu .= ' </div> ';
-                $contenu .= '</div>';
-        }
+        $contenu2 .= '<div class="row mr-4 mb-2">';
+                $contenu2 .= ' <div class="card" style="width: 18rem;">';
+                    $contenu2 .= ' <img src="' . $profil['photo'] . '" class="card-img-top" alt="">';
+                    $contenu2 .= ' <div class="card-body">';
+                        $contenu2 .= ' <h5 class="card-title">Nom et Prenom</h5>';
+                        $contenu2 .= ' <p class="card-text">' . $profil['Nom'].' ' . $profil['prenom'] .'</p>';
+                    $contenu2 .= ' </div>';
+                    $contenu2 .= ' <ul class="list-group list-group-flush">';
+                        $contenu2 .= ' <li class="list-group-item">Age : ' .$profil['age'] .'</li>';
+                        $contenu2 .= ' <li class="list-group-item">Ville : ' . $profil['ville'] . '</li>';     
+                    $contenu2 .= ' </ul>';
+                    $contenu2 .= ' <div class="card-body">';
+                    $contenu2 .= '<a href="#" class="card-link">' . substr($profil['motivations'], 0, 30).'....</a>';
+                    $contenu2 .= ' </div>';
+                    $contenu2 .= ' </div> ';
+        $contenu2 .= '</div>';
+    }
 
 ?>
 <!doctype html>
@@ -106,13 +104,13 @@ if ( isset ($_POST ['name'])&&($_POST ['prenom'])&&($_POST ['age'])&&($_POST ['v
 
         <!-- LA CARED  -->
         <div class="container mb-5">         
-            <?php echo $contenu1; ?>         
+            <?php echo $contenu; ?>         
         </div><!-- fermeture div.container pour le message  -->
         <div class="w-100"></div>
         <div class="container">
             <h3>Présentation des profils</h3>    
             <div  class="row">
-                <?php echo $contenu; ?>    
+                <?php echo $contenu2; ?>    
             </div>
         </div>
         <hr>
